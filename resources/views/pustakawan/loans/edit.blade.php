@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-200">
-                
+
                 <!-- Header Status -->
                 <div class="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -20,15 +20,15 @@
                             <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Peminjam: {{ $loan->member->name }}</p>
                         </div>
                     </div>
-                    
+
                     <!-- Badge Jatuh Tempo -->
                     @php
-                        $isOverdue = \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($loan->due_date)) && $loan->status == 'aktif';
+                    $isOverdue = \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($loan->due_date)) && $loan->status == 'aktif';
                     @endphp
                     @if($isOverdue)
-                        <span class="px-4 py-2 bg-red-100 text-red-700 rounded-full text-xs font-bold border border-red-200 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">warning</span> TERLAMBAT
-                        </span>
+                    <span class="px-4 py-2 bg-red-100 text-red-700 rounded-full text-xs font-bold border border-red-200 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">warning</span> TERLAMBAT
+                    </span>
                     @endif
                 </div>
 
@@ -46,40 +46,41 @@
 
                             <div class="space-y-3">
                                 @foreach($loan->loanItems as $index => $item)
-                                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                        <div class="flex items-center gap-3">
-                                            <span class="text-sm font-bold text-gray-400">#{{ $index + 1 }}</span>
-                                            <div>
-                                                <p class="text-sm font-bold text-gray-900">{{ $item->bookItem->book->title }}</p>
-                                                <p class="text-xs text-gray-500">Barcode: {{ $item->bookItem->item_code }}</p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Pilihan Kondisi Kembali -->
-                                        <div class="flex gap-2">
-                                            <select name="items[{{ $item->id }}][return_condition]" class="text-xs rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
-                                                <option value="baik" {{ $item->bookItem->condition == 'baik' ? 'selected' : '' }}>Kembali Baik</option>
-                                                <option value="rusak">Kembali Rusak</option>
-                                                <option value="hilang">Buku Hilang</option>
-                                            </select>
+                                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-sm font-bold text-gray-400">#{{ $index + 1 }}</span>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-900">{{ $item->bookItem->book->title }}</p>
+                                            <p class="text-xs text-gray-500">Barcode: {{ $item->bookItem->item_code }}</p>
                                         </div>
                                     </div>
+
+                                    <!-- Pilihan Kondisi Kembali -->
+                                    <div class="flex gap-2">
+                                        <select name="items[{{ $item->id }}][return_condition]" class="text-xs rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                                            <option value="baik" {{ $item->bookItem->condition == 'baik' ? 'selected' : '' }}>Kembali Baik</option>
+                                            <option value="rusak ringan">Rusak Ringan</option>
+                                            <option value="rusak berat">Rusak Berat</option>
+                                            <option value="hilang">Buku Hilang</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 @endforeach
                             </div>
                         </div>
 
                         <!-- Info Denda (Jika Ada) -->
                         @if($isOverdue)
-                            <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                                <div class="flex items-center gap-2 text-orange-800 font-bold mb-1">
-                                    <span class="material-symbols-outlined">payments</span>
-                                    Informasi Denda
-                                </div>
-                                <p class="text-sm text-orange-700">
-                                    Transaksi ini melewati batas waktu kembali ({{ \Carbon\Carbon::parse($loan->due_date)->format('d M Y') }}). 
-                                    Pastikan siswa telah melunasi denda sebelum memproses pengembalian.
-                                </p>
+                        <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                            <div class="flex items-center gap-2 text-orange-800 font-bold mb-1">
+                                <span class="material-symbols-outlined">payments</span>
+                                Informasi Denda
                             </div>
+                            <p class="text-sm text-orange-700">
+                                Transaksi ini melewati batas waktu kembali ({{ \Carbon\Carbon::parse($loan->due_date)->format('d M Y') }}).
+                                Pastikan siswa telah melunasi denda sebelum memproses pengembalian.
+                            </p>
+                        </div>
                         @endif
 
                         <div class="pt-6 border-t border-gray-100">

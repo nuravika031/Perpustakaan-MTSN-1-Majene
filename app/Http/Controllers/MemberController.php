@@ -13,10 +13,7 @@ class MemberController extends Controller
      */
     public function index()
     {
-        // Mengambil semua data anggota beserta relasi kelasnya, diurutkan dari yang terbaru
         $members = Member::with('studentClass')->latest()->get();
-        
-        // Kita asumsikan nama file view-nya nanti adalah 'pustakawan.members.index'
         return view('pustakawan.members.index', compact('members'));
     }
 
@@ -25,37 +22,87 @@ class MemberController extends Controller
      */
     public function create()
     {
-        // Mengambil data kelas untuk ditampilkan di pilihan dropdown (jika yang mendaftar adalah siswa)
-        $classes = StudentClass::all();
-        
+        // Mengurutkan kelas berdasarkan tingkat (level) agar rapi
+        $classes = StudentClass::orderBy('level', 'asc')->get();
         return view('pustakawan.members.create', compact('classes'));
     }
 
     /**
-     * Menyimpan data anggota baru ke dalam database.
+     * Menyimpan data anggota baru ke dalam database (Mendukung Form Biasa & AJAX Quick Add).
      */
     public function store(Request $request)
     {
-        // 1. Validasi data yang dikirim dari form
-        $validatedData = $request->validate([
-            'member_code' => 'required|unique:members,member_code',
-            'nis_nip' => 'required|unique:members,nis_nip',
+        // 1. Validasi input
+        $validated = $request->validate([
+            'nis_nip' => 'required|string|max:50|unique:members,nis_nip',
             'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
             'member_type' => 'required|in:siswa,guru',
             'gender' => 'required|in:laki-laki,perempuan',
-            'student_class_id' => 'nullable|exists:classes,id', // Kosong jika guru
-            'phone' => 'nullable|string|max:15',
+            // Jika tipe anggota = siswa, wajib diisi dan harus ada di tabel classes
+            'student_class_id' => 'required_if:member_type,siswa|nullable|exists:classes,id',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
 
-        // 2. Simpan data ke database
-        Member::create($validatedData);
+        try {
+            // 2. Logika Auto-Generate Kode Anggota
+            $lastMember = Member::orderBy('id', 'desc')->first();
 
-        // 3. Arahkan kembali ke halaman daftar anggota dengan pesan sukses
-        return redirect()->route('members.index')->with('success', 'Data anggota berhasil ditambahkan!');
+            if (!$lastMember) {
+                $newCode = 'ANG-001';
+            } else {
+                $lastCode = $lastMember->member_code;
+                $lastNumber = (int) substr($lastCode, 4); 
+                $newNumber = $lastNumber + 1; 
+                $newCode = 'ANG-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT); 
+            }
+
+            // Sisipkan kode otomatis
+            $validated['member_code'] = $newCode;
+
+            // 3. Simpan ke database
+            $member = Member::create($validated);
+
+            // 4. PENANGANAN AJAX (Untuk fitur Daftar Kilat di Kasir Peminjaman)
+            if ($request->wantsJson() || $request->ajax()) {
+                
+                // Ambil label nama kelas untuk dikembalikan ke dropdown kasir
+                $className = 'Guru/Staff';
+                if ($member->member_type === 'siswa' && $member->student_class_id) {
+                    $studentClass = StudentClass::find($member->student_class_id);
+                    $className = $studentClass ? $studentClass->class_name : 'Siswa';
+                }
+
+                // Kirim balik data berformat JSON (Status 201 = Created)
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Anggota berhasil didaftarkan secara kilat.',
+                    'member' => $member,
+                    'class_name' => $className
+                ], 201);
+            }
+
+            // 5. PENANGANAN NORMAL (Form Biasa)
+            return redirect()->route('members.index')->with('success', 'Berhasil! Anggota baru terdaftar dengan ID: ' . $newCode);
+
+        } catch (\Exception $e) {
+            
+            // Jika gagal tingkat database (Penanganan AJAX)
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan ke database.',
+                    'error' => $e->getMessage() // Opsional: Untuk melihat detail error di console
+                ], 500);
+            }
+
+            // Jika gagal tingkat database (Penanganan Form Biasa)
+            return back()->withInput()->withErrors(['error' => 'Gagal menambahkan anggota sistem.']);
+        }
     }
 
     /**
-     * Menampilkan detail satu anggota (opsional, untuk melihat riwayat dll).
+     * Menampilkan detail satu anggota.
      */
     public function show(Member $member)
     {
@@ -67,7 +114,7 @@ class MemberController extends Controller
      */
     public function edit(Member $member)
     {
-        $classes = StudentClass::all();
+        $classes = StudentClass::orderBy('level', 'asc')->get();
         return view('pustakawan.members.edit', compact('member', 'classes'));
     }
 
@@ -76,34 +123,28 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        // 1. Validasi data (Pengecualian unique untuk ID member yang sedang diedit agar tidak error)
+        // Pengecualian unique untuk data yang sedang diedit
         $validatedData = $request->validate([
-            'member_code' => 'required|unique:members,member_code,' . $member->id,
             'nis_nip' => 'required|unique:members,nis_nip,' . $member->id,
             'name' => 'required|string|max:255',
             'member_type' => 'required|in:siswa,guru',
             'gender' => 'required|in:laki-laki,perempuan',
-            'student_class_id' => 'nullable|exists:classes,id',
-            'phone' => 'nullable|string|max:15',
-            'status' => 'required|in:aktif,nonaktif', // Status bisa diubah saat edit
+            'student_class_id' => 'required_if:member_type,siswa|nullable|exists:classes,id',
+            'phone' => 'nullable|string|max:20',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
 
-        // 2. Update data
         $member->update($validatedData);
 
-        // 3. Arahkan kembali dengan pesan sukses
         return redirect()->route('members.index')->with('success', 'Data anggota berhasil diperbarui!');
     }
 
     /**
-     * Menghapus (atau menonaktifkan) data anggota.
+     * Menghapus data anggota.
      */
     public function destroy(Member $member)
     {
-        // Sebagai praktik terbaik perpustakaan, kita mungkin hanya mengubah statusnya, bukan menghapus datanya (opsional). 
-        // Tapi untuk tahap ini, kita gunakan fitur hapus permanen agar sederhana.
         $member->delete();
-
         return redirect()->route('members.index')->with('success', 'Data anggota berhasil dihapus!');
     }
 }

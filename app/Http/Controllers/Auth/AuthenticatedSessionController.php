@@ -12,7 +12,7 @@ use Illuminate\View\View;
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Menampilkan halaman login.
      */
     public function create(): View
     {
@@ -20,31 +20,19 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Memproses login pengguna.
      */
-   public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        // --- KODE KUSTOM KITA DIMULAI DARI SINI ---
-        // Cek role pengguna untuk mengarahkan ke dashboard yang tepat
-        if ($request->user()->role_id == 1) {
-            // Jika Pustakawan (role_id = 1)
-            return redirect()->intended('/pustakawan/dashboard');
-        } elseif ($request->user()->role_id == 2) {
-            // Jika Kepala Sekolah (role_id = 2)
-            return redirect()->intended('/kepala-sekolah/dashboard');
-        }
-        // --- BATAS KODE KUSTOM ---
-
-        // Ini adalah *fallback* bawaan Breeze jika role tidak ditemukan
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 
     /**
-     * Destroy an authenticated session.
+     * Logout pengguna.
      */
     public function destroy(Request $request): RedirectResponse
     {
