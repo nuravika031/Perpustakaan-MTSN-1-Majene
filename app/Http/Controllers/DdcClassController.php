@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DdcClass;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DdcClassController extends Controller
 {
@@ -12,8 +13,8 @@ class DdcClassController extends Controller
      */
     public function index()
     {
-        // Mengambil data DDC dan mengurutkannya berdasarkan kode angka (000 - 900)
         $ddcClasses = DdcClass::orderBy('code', 'asc')->get();
+
         return view('pustakawan.ddc.index', compact('ddcClasses'));
     }
 
@@ -22,27 +23,53 @@ class DdcClassController extends Controller
      */
     public function edit($id)
     {
-        $ddcClass = DdcClass::findOrFail($id);
-        return view('pustakawan.ddc.edit', compact('ddcClass'));
+        $ddcClass = DdcClass::withCount('books')->findOrFail($id);
+
+        $isCodeEditable = $ddcClass->books_count === 0;
+
+        return view('pustakawan.ddc.edit', compact('ddcClass', 'isCodeEditable'));
     }
 
     /**
-     * Menyimpan perubahan nama dan deskripsi DDC.
+     * Menyimpan perubahan DDC.
+     *
+     * Kode DDC hanya boleh diedit jika belum ada buku yang memakai DDC tersebut.
      */
     public function update(Request $request, $id)
     {
-        $ddcClass = DdcClass::findOrFail($id);
+        $ddcClass = DdcClass::withCount('books')->findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string|max:255',
-        ]);
+        $isCodeEditable = $ddcClass->books_count === 0;
 
-        $ddcClass->update([
+        $rules = [
+            'name' => ['required', 'string', 'max:100'],
+            'description' => ['nullable', 'string', 'max:255'],
+        ];
+
+        if ($isCodeEditable) {
+            $rules['code'] = [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('ddc_classes', 'code')->ignore($ddcClass->id),
+            ];
+        }
+
+        $validated = $request->validate($rules);
+
+        $updateData = [
             'name' => $validated['name'],
-            'description' => $validated['description'],
-        ]);
+            'description' => $validated['description'] ?? null,
+        ];
 
-        return redirect()->route('ddc.index')->with('success', 'Master DDC berhasil diperbarui!');
+        if ($isCodeEditable) {
+            $updateData['code'] = $validated['code'];
+        }
+
+        $ddcClass->update($updateData);
+
+        return redirect()
+            ->route('ddc.index')
+            ->with('success', 'Master DDC berhasil diperbarui.');
     }
 }

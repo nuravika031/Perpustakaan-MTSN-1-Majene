@@ -15,7 +15,7 @@
 
                     @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 3)
                         <x-nav-link :href="route('loans.index')" :active="request()->routeIs('loans.*')">
-                            {{ __('Sirkulasi') }}
+                            {{ __('Peminjaman') }}
                         </x-nav-link>
 
                         <div class="hidden sm:flex sm:items-center">

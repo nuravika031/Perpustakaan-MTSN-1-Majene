@@ -1,222 +1,160 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Login - SIM Perpustakaan MTsN 1 Majene</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "on-error-container": "#93000a",
-              "on-background": "#121c2a",
-              "tertiary-container": "#636f68",
-              "secondary-fixed-dim": "#b7c8e1",
-              "secondary": "#505f76",
-              "on-tertiary-container": "#e5f2e9",
-              "surface-tint": "#006d37",
-              "tertiary": "#4b5750",
-              "surface-bright": "#f8f9ff",
-              "surface-dim": "#d0dbed",
-              "surface-variant": "#d9e3f6",
-              "secondary-fixed": "#d3e4fe",
-              "error-container": "#ffdad6",
-              "surface-container-high": "#dee9fc",
-              "tertiary-fixed-dim": "#bdcac1",
-              "on-primary-fixed-variant": "#005228",
-              "surface-container": "#e6eeff",
-              "inverse-primary": "#7ada95",
-              "surface-container-low": "#eff4ff",
-              "surface-container-highest": "#d9e3f6",
-              "on-tertiary": "#ffffff",
-              "primary-fixed-dim": "#7ada95",
-              "primary": "#006130",
-              "surface-container-lowest": "#ffffff",
-              "inverse-surface": "#27313f",
-              "on-error": "#ffffff",
-              "primary-container": "#107c41",
-              "secondary-container": "#d0e1fb",
-              "on-primary": "#ffffff",
-              "background": "#f8f9ff",
-              "error": "#ba1a1a",
-              "on-secondary-fixed-variant": "#38485d",
-              "on-primary-container": "#b6ffc5",
-              "on-surface-variant": "#3f4940",
-              "on-primary-fixed": "#00210c",
-              "tertiary-fixed": "#d9e6dd",
-              "on-secondary-container": "#54647a",
-              "outline-variant": "#becabd",
-              "on-secondary-fixed": "#0b1c30"
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              full: "9999px"
-            },
-            spacing: {
-              "stack-sm": "8px",
-              "margin-page": "40px",
-              "stack-lg": "32px",
-              base: "8px",
-              "stack-md": "16px",
-              gutter: "24px",
-              "container-max": "1280px"
-            },
-            fontFamily: {
-              "body-md": ["Inter"],
-              "label-caps": ["Inter"],
-              "headline-md": ["Inter"],
-              "display-lg": ["Inter"],
-              "title-sm": ["Inter"],
-              "body-sm": ["Inter"]
-            },
-            fontSize: {
-              "body-md": [
-                "16px",
-                {
-                  lineHeight: "24px",
-                  fontWeight: "400"
-                }
-              ],
-              "label-caps": [
-                "12px",
-                {
-                  lineHeight: "16px",
-                  letterSpacing: "0.05em",
-                  fontWeight: "600"
-                }
-              ],
-              "headline-md": [
-                "24px",
-                {
-                  lineHeight: "32px",
-                  letterSpacing: "-0.01em",
-                  fontWeight: "600"
-                }
-              ],
-              "display-lg": [
-                "36px",
-                {
-                  lineHeight: "44px",
-                  letterSpacing: "-0.02em",
-                  fontWeight: "700"
-                }
-              ],
-              "title-sm": [
-                "18px",
-                {
-                  lineHeight: "28px",
-                  fontWeight: "600"
-                }
-              ],
-              "body-sm": [
-                "14px",
-                {
-                  lineHeight: "20px",
-                  fontWeight: "400"
-                }
-              ]
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-        body {
-            background-color: #f8f9ff;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        }
-    </style>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<body class="bg-background min-h-screen flex items-center justify-center p-4">
-<main class="w-full max-w-md bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
-    <div class="bg-surface-container-low p-margin-page flex flex-col items-center justify-center border-b border-outline-variant">
-        <div class="w-20 h-20 bg-primary-container rounded-full flex items-center justify-center mb-4 text-on-primary-container">
-            <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">local_library</span>
+<body class="min-h-screen bg-slate-100">
+
+    @php
+        $schoolLogo = asset('images/Logo-Header-Web-Sekolah.png');
+    @endphp
+
+    <div class="min-h-screen flex items-center justify-center px-4 py-10 bg-gradient-to-br from-slate-100 via-emerald-50/40 to-sky-50/30">
+        <div class="w-full max-w-md">
+
+            <div class="overflow-hidden rounded-[28px] border border-emerald-100 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+
+                {{-- Header --}}
+                <div class="border-b border-emerald-100 bg-gradient-to-r from-emerald-600 to-teal-500 px-8 py-8 text-center text-white">
+                    <div class="mx-auto flex h-35 w-35 items-center justify-center rounded-3xl bg-white/15 p-4 backdrop-blur-sm">
+                        <img
+                            src="{{ $schoolLogo }}"
+                            alt="Logo Sekolah"
+                            class="max-h-full max-w-full object-contain"
+                        >
+                    </div>
+
+                    <h1 class="mt-5 text-2xl font-bold">
+                        SIM Perpustakaan
+                    </h1>
+
+                    <p class="mt-1 text-lg font-semibold text-emerald-50">
+                        MTsN 1 Majene
+                    </p>
+
+                    <p class="mt-3 text-sm text-emerald-50">
+                        Silakan masuk untuk mengakses sistem perpustakaan.
+                    </p>
+                </div>
+
+                {{-- Form --}}
+                <div class="px-8 py-8">
+                    @if (session('status'))
+                        <div class="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="mb-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                            <div class="font-semibold mb-2">Terjadi kesalahan:</div>
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                        @csrf
+
+                        {{-- Username / Email --}}
+                        <div>
+                            <label for="login" class="mb-2 block text-sm font-semibold text-gray-800">
+                                Username / Email
+                            </label>
+
+                            <div class="relative">
+                                <span class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
+                                    person
+                                </span>
+
+                                <input
+                                    id="login"
+                                    type="text"
+                                    name="login"
+                                    value="{{ old('login') }}"
+                                    required
+                                    autofocus
+                                    autocomplete="username"
+                                    placeholder="Masukkan username atau email"
+                                    class="block w-full rounded-2xl border border-emerald-200 bg-white px-12 py-3.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                >
+                            </div>
+                        </div>
+
+                        {{-- Password --}}
+                        <div>
+                            <label for="password" class="mb-2 block text-sm font-semibold text-gray-800">
+                                Password
+                            </label>
+
+                            <div class="relative">
+                                <span class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
+                                    lock
+                                </span>
+
+                                <input
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    required
+                                    autocomplete="current-password"
+                                    placeholder="Masukkan password"
+                                    class="block w-full rounded-2xl border border-gray-200 bg-white px-12 py-3.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                >
+                            </div>
+                        </div>
+
+                        {{-- Remember + Forgot --}}
+                        <div class="flex items-center justify-between gap-3">
+                            <label for="remember_me" class="inline-flex items-center gap-2 text-sm text-gray-600">
+                                <input
+                                    id="remember_me"
+                                    type="checkbox"
+                                    name="remember"
+                                    class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                                >
+                                <span>Ingat Saya</span>
+                            </label>
+
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}"
+                                   class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800">
+                                    Lupa Password?
+                                </a>
+                            @endif
+                        </div>
+
+                        {{-- Button --}}
+                        <button
+                            type="submit"
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-5 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-emerald-800"
+                        >
+                            <span>Masuk Sistem</span>
+                            <span class="material-symbols-outlined text-[18px]">login</span>
+                        </button>
+                    </form>
+                </div>
+
+                {{-- Footer --}}
+                <div class="border-t border-slate-100 bg-slate-50 px-6 py-4 text-center">
+                    <p class="text-xs text-gray-500">
+                        © {{ date('Y') }} MTsN 1 Majene. Hak Cipta Dilindungi.
+                    </p>
+                </div>
+            </div>
+
         </div>
-        <h1 class="font-display-lg text-display-lg text-primary text-center mb-2">SIM Perpustakaan</h1>
-        <h2 class="font-headline-md text-headline-md text-on-surface-variant text-center">MTsN 1 Majene</h2>
     </div>
 
-    <div class="p-stack-lg flex flex-col gap-gutter">
-        @if(session('status'))
-            <div class="rounded-lg border border-primary-container bg-surface-container p-4 text-on-secondary-container text-sm">
-                {{ session('status') }}
-            </div>
-        @endif
-        @if($errors->any())
-            <div class="rounded-lg border border-error-container bg-error-container/80 p-4 text-on-error text-sm">
-                <ul class="list-disc list-inside space-y-1">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('login') }}" class="flex flex-col gap-gutter">
-            @csrf
-
-            <div class="flex flex-col gap-base">
-                <label class="font-title-sm text-title-sm text-on-surface" for="email">Username / Email</label>
-                <div class="relative flex items-center">
-                    <span class="material-symbols-outlined absolute left-3 text-outline">person</span>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value="{{ old('email') }}"
-                        required
-                        autofocus
-                        autocomplete="username"
-                        placeholder="Masukkan username atau email"
-                        class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow font-body-md text-body-md text-on-surface placeholder:text-outline-variant"
-                    />
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-base">
-                <label class="font-title-sm text-title-sm text-on-surface" for="password">Password</label>
-                <div class="relative flex items-center">
-                    <span class="material-symbols-outlined absolute left-3 text-outline">lock</span>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        autocomplete="current-password"
-                        placeholder="Masukkan password"
-                        class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant bg-surface focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow font-body-md text-body-md text-on-surface placeholder:text-outline-variant"
-                    />
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mt-2">
-                <div class="flex items-center gap-2">
-                    <input id="remember" name="remember" type="checkbox" class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4" />
-                    <label class="font-body-sm text-body-sm text-on-surface-variant" for="remember">Ingat Saya</label>
-                </div>
-                @if (Route::has('password.request'))
-                    <a class="font-body-sm text-body-sm text-primary hover:underline" href="{{ route('password.request') }}">Lupa Password?</a>
-                @endif
-            </div>
-
-            <button type="submit" class="w-full mt-4 bg-primary text-on-primary font-title-sm text-title-sm py-3 px-4 rounded-lg hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
-                <span>Masuk Sistem</span>
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">login</span>
-            </button>
-        </form>
-    </div>
-
-    <div class="bg-surface-container-low p-4 text-center border-t border-outline-variant">
-        <p class="font-body-sm text-body-sm text-on-surface-variant">© 2026 MTsN 1 Majene. Hak Cipta Dilindungi.</p>
-    </div>
-</main>
 </body>
 </html>

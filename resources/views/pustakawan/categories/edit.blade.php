@@ -6,14 +6,14 @@
                     Master Data
                 </p>
                 <h2 class="mt-1 text-xl font-bold text-gray-900">
-                    Edit Kelas DDC
+                    Edit Kategori Buku
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">
-                    Sesuaikan kode, nama, dan deskripsi klasifikasi sesuai kebutuhan perpustakaan.
+                    Perbarui nama dan deskripsi kategori agar pengelompokan buku tetap rapi.
                 </p>
             </div>
 
-            <a href="{{ route('ddc.index') }}"
+            <a href="{{ route('categories.index') }}"
                class="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white px-5 py-3 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50">
                 <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                 Kembali
@@ -51,108 +51,40 @@
 
                             <div>
                                 <h3 class="text-lg font-bold">
-                                    Perbarui Informasi Kelas DDC
+                                    Form Edit Kategori
                                 </h3>
                                 <p class="mt-1 text-sm text-emerald-50">
-                                    Kode DDC hanya bisa diedit jika belum digunakan oleh data buku.
+                                    Sesuaikan data kategori yang digunakan untuk mengelompokkan buku.
                                 </p>
                             </div>
                         </div>
 
                         <div class="rounded-2xl border border-white/20 bg-white/15 px-4 py-3">
-                            <p class="text-xs text-emerald-50">Status Kode</p>
-                            <p class="mt-1 text-sm font-bold text-white">
-                                {{ $isCodeEditable ? 'Bisa Diedit' : 'Terkunci' }}
+                            <p class="text-xs text-emerald-50">Kategori Saat Ini</p>
+                            <p class="mt-1 max-w-[260px] truncate text-sm font-bold text-white">
+                                {{ $category->name }}
                             </p>
                         </div>
                     </div>
                 </div>
 
                 <div class="p-6 md:p-8">
-                    <form method="POST" action="{{ route('ddc.update', $ddcClass->id) }}" class="space-y-8">
+                    <form method="POST" action="{{ route('categories.update', $category->id) }}" class="space-y-8">
                         @csrf
                         @method('PUT')
 
                         <section class="rounded-3xl border border-emerald-100 bg-emerald-50/50 p-5 md:p-6">
                             <div class="mb-5 flex items-start gap-3">
                                 <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-                                    <span class="material-symbols-outlined text-[20px]">tag</span>
+                                    <span class="material-symbols-outlined text-[20px]">label</span>
                                 </div>
+
                                 <div>
                                     <h4 class="font-bold text-gray-900">
-                                        Kode Klasifikasi
-                                    </h4>
-
-                                    @if($isCodeEditable)
-                                        <p class="mt-1 text-sm text-gray-500">
-                                            Kode DDC masih bisa diedit karena belum digunakan oleh data buku.
-                                        </p>
-                                    @else
-                                        <p class="mt-1 text-sm text-gray-500">
-                                            Kode DDC dikunci karena sudah digunakan oleh {{ $ddcClass->books_count }} buku.
-                                        </p>
-                                    @endif
-                                </div>
-                            </div>
-
-                            @if($isCodeEditable)
-                                <div>
-                                    <label for="code" class="block text-xs font-bold uppercase tracking-[0.12em] text-gray-500">
-                                        Kode DDC <span class="text-red-500">*</span>
-                                    </label>
-
-                                    <input
-                                        id="code"
-                                        name="code"
-                                        type="text"
-                                        value="{{ old('code', $ddcClass->code) }}"
-                                        required
-                                        placeholder="Contoh: 500"
-                                        class="mt-2 block w-full rounded-2xl border border-emerald-200 bg-white px-4 py-3 font-mono text-sm font-bold text-gray-900 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                                    >
-
-                                    <p class="mt-2 text-xs text-emerald-700">
-                                        Kode ini masih aman diedit karena belum dipakai oleh buku mana pun.
-                                    </p>
-
-                                    @error('code')
-                                        <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            @else
-                                <div class="grid gap-4 sm:grid-cols-[160px_1fr] sm:items-center">
-                                    <input
-                                        type="text"
-                                        value="{{ $ddcClass->code }}"
-                                        readonly
-                                        disabled
-                                        class="block w-full cursor-not-allowed rounded-2xl border border-gray-200 bg-gray-100 px-4 py-3 font-mono text-sm font-bold text-gray-500"
-                                    >
-
-                                    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
-                                        <div class="flex items-start gap-2">
-                                            <span class="material-symbols-outlined text-[18px] text-amber-700">lock</span>
-                                            <p class="text-xs leading-5 text-amber-700">
-                                                Kode ini tidak dapat diedit karena sudah digunakan oleh data buku.
-                                                Untuk menjaga konsistensi kode buku, rak, dan label fisik, hanya nama dan deskripsi yang dapat diperbarui.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        </section>
-
-                        <section class="rounded-3xl border border-gray-100 bg-white p-5 md:p-6 shadow-sm">
-                            <div class="mb-5 flex items-start gap-3">
-                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-100 text-teal-700">
-                                    <span class="material-symbols-outlined text-[20px]">account_tree</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-gray-900">
-                                        Detail Klasifikasi
+                                        Informasi Kategori
                                     </h4>
                                     <p class="mt-1 text-sm text-gray-500">
-                                        Nama dan deskripsi ini akan membantu pustakawan memahami kelompok buku.
+                                        Nama kategori digunakan pada data buku dan laporan koleksi.
                                     </p>
                                 </div>
                             </div>
@@ -160,17 +92,17 @@
                             <div class="space-y-5">
                                 <div>
                                     <label for="name" class="block text-xs font-bold uppercase tracking-[0.12em] text-gray-500">
-                                        Nama Klasifikasi <span class="text-red-500">*</span>
+                                        Nama Kategori <span class="text-red-500">*</span>
                                     </label>
 
                                     <input
                                         id="name"
                                         name="name"
                                         type="text"
-                                        value="{{ old('name', $ddcClass->name) }}"
+                                        value="{{ old('name', $category->name) }}"
                                         required
-                                        placeholder="Contoh: Ilmu-ilmu Sosial"
-                                        class="mt-2 block w-full rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-gray-900 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                        placeholder="Contoh: Matematika, IPA, Bahasa Indonesia"
+                                        class="mt-2 block w-full rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                                     >
 
                                     @error('name')
@@ -180,16 +112,16 @@
 
                                 <div>
                                     <label for="description" class="block text-xs font-bold uppercase tracking-[0.12em] text-gray-500">
-                                        Deskripsi / Ruang Lingkup
+                                        Deskripsi
                                     </label>
 
                                     <textarea
                                         id="description"
                                         name="description"
                                         rows="4"
-                                        placeholder="Jelaskan cakupan buku yang masuk pada klasifikasi ini..."
+                                        placeholder="Contoh: Kategori untuk buku pelajaran matematika."
                                         class="mt-2 block w-full rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                                    >{{ old('description', $ddcClass->description) }}</textarea>
+                                    >{{ old('description', $category->description) }}</textarea>
 
                                     @error('description')
                                         <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
@@ -199,7 +131,7 @@
                         </section>
 
                         <div class="flex flex-col-reverse gap-3 border-t border-gray-100 pt-6 sm:flex-row sm:items-center sm:justify-end">
-                            <a href="{{ route('ddc.index') }}"
+                            <a href="{{ route('categories.index') }}"
                                class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-6 py-3 text-sm font-bold text-gray-600 transition hover:bg-gray-50">
                                 Batal
                             </a>

@@ -13,8 +13,19 @@ use App\Models\Member;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Halaman Awal Sistem
+|--------------------------------------------------------------------------
+| Jika belum login, langsung masuk ke halaman login.
+| Jika sudah login, langsung masuk ke dashboard.
+*/
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()->route('login');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

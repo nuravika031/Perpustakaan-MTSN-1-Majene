@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-use App\Models\Member;
 
 class StudentClass extends Model
 {
-    // Memberitahu Laravel bahwa model ini menggunakan tabel 'classes'
-    protected $table = 'classes'; 
+    use HasFactory;
+
+    protected $table = 'classes';
 
     protected $fillable = [
         'class_name',
@@ -18,8 +17,7 @@ class StudentClass extends Model
         'academic_year',
     ];
 
-    // Satu kelas memiliki banyak anggota (siswa)
-    public function members(): HasMany
+    public function members()
     {
         return $this->hasMany(Member::class, 'student_class_id');
     }

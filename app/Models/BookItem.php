@@ -1,18 +1,27 @@
 <?php
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BookItem extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'book_id', 'item_code', 'classification_code', 'author_code',
-        'title_initial', 'copy_number', 'status', 'condition',
-        'location', 'acquisition_date'
+        'book_id',
+        'item_code',
+        'classification_code',
+        'author_code',
+        'title_code',
+        'title_initial',
+        'copy_number',
+        'status',
+        'condition',
     ];
 
-    public function book(): BelongsTo
+    public function book()
     {
         return $this->belongsTo(Book::class);
     }
